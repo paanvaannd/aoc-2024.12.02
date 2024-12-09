@@ -38,11 +38,41 @@ def is_appropriately_incrementing(report_line: report) -> bool:
     return _appropriate_increment
 
 
-def determine_safety(report_line: report) -> bool:
+def dampen_issue(report_line: report, i: int) -> bool:
+    _unsafe_report = list(report_line)
+    del _unsafe_report[i]
+    _modified_report = tuple(_unsafe_report)
+
+    _ordered = is_ordered(_modified_report)
+    _unique = is_unique(_modified_report)
+    _incrementing = is_appropriately_incrementing(_modified_report)
+    return _ordered and _unique and _incrementing
+
+
+def attempt_issue_dampening(report_line: report) -> bool:
+    return any([dampen_issue(report_line, i)
+                for i, _ in enumerate(report_line)])
+
+
+def determine_strict_safety(report_line: report) -> bool:
     _ordered: bool = is_ordered(report_line)
     _unique: bool = is_unique(report_line)
     _incrementing: bool = is_appropriately_incrementing(report_line)
     return _ordered and _unique and _incrementing
+
+
+def determine_dampened_safety(report_line: report) -> bool:
+    _ordered: bool = is_ordered(report_line)
+    _unique: bool = is_unique(report_line)
+    _incrementing: bool = is_appropriately_incrementing(report_line)
+    _conditions_met = _ordered + _unique + _incrementing
+
+    _safe: bool = False
+    if _conditions_met == 3:
+        _safe = True
+    else:
+        _safe = attempt_issue_dampening(report_line)
+    return _safe
 
 
 def parse_input(corpus: str) -> tuple[tuple[int, ...], ...]:
@@ -53,9 +83,18 @@ def parse_input(corpus: str) -> tuple[tuple[int, ...], ...]:
 def main():
     contents = read_data_file("level_reports.txt")
     parsed_contents = parse_input(contents)
-    safe_reports = [determine_safety(_line) for _line in parsed_contents]
+
     print("\nPart 1\n------")
-    print(f"The total number of safe reports is {sum(safe_reports):,}.")
+    strictly_safe_reports = [determine_strict_safety(_line)
+                             for _line in parsed_contents]
+    print("The total number of safe reports is "
+          f"{sum(strictly_safe_reports):,}.")
+
+    print("\nPart 2\n------")
+    dampened_safe_reports = [determine_dampened_safety(_line)
+                             for _line in parsed_contents]
+    print("The total number of safe reports is "
+          f"{sum(dampened_safe_reports):,}.")
 
 
 if __name__ == "__main__":
