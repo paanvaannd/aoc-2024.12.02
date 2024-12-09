@@ -4,7 +4,7 @@ _Advent of Code 2024, Day 2_
 
 **Project status**:
 
-_Work in progress: check back later!_
+[![UNIX (macOS & Linux)](https://github.com/paanvaannd/aoc-2024.12.02/actions/workflows/tests.yaml/badge.svg)](https://github.com/paanvaannd/aoc-2024.12.02/actions/workflows/tests.yaml)
 
 ## Puzzles
 
