@@ -91,5 +91,21 @@ def test_is_appropriately_incrementing(report_line: report, expected: bool):
                      id="Testing safety: unsafe, ascending, unique, non-incrementing.")
     )
 )
-def test_determine_safety(report_line: report, expected):
-    assert rnr.determine_safety(report_line) == expected
+def test_determine_safety_strict(report_line: report, expected):
+    assert rnr.determine_strict_safety(report_line) == expected
+
+
+@pytest.mark.parametrize(
+    ("report_line", "expected"),
+    (
+        pytest.param((1, 2, 3, 3, 5), True,
+                     id="Testing dampened safety: safe, if repetition dampened."),
+        pytest.param((10, 6, 5, 4, 3), True,
+                     id="Testing dampened safety: safe, if increment dampened."),
+        pytest.param((1, 2, 3, 5, 4), True,
+                     id="Testing dampened safety: safe, if disorder dampened.")
+    )
+)
+def test_determine_safety_dampened(report_line: report, expected):
+    assert rnr.determine_dampened_safety(report_line) == expected
+
